@@ -1,0 +1,7 @@
+{application, lrw,
+ [{description, "Lowest Random Weight hashing for IPv4 addresses"},
+  {vsn, "1.0.0"},
+  {modules, [lrw]},
+  {registered, []},
+  {applications, [kernel, stdlib]}]}.
+
