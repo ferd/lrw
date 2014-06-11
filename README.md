@@ -36,6 +36,16 @@ The `top/3` functions returns a subset. It is using `all/2` in its implementatio
 
 The list of IPs must be IPv4s.
 
+If the user wishes to break away from the algorithms explained in the
+paper, a more generic form exists:
+
+ - `lrw:all_(Key, [Node, ...])`: any term can be used as `Node`.
+ - `lrw:top_(Key, [Node, ...], Count)`: any term can be used as `Node`.
+
+Custom hashing functions can be passed by calling `lrw:all/3` and
+`lrw:top/4`, where the last argument of each function must be
+a fun of the form `fun(Key, Node) -> Number end`.
+
 ## Building ##
 
 Pullit in your projects. Compile standalone using rebar (you should have this
@@ -53,4 +63,8 @@ Then run the property-based tests (10,000 each) with:
 
     $ rebar get-deps compile eunit --config rebar.tests.config
 
+## Changelog ##
 
+- `1.1.0`: Adding `all_/2`, `top_/3`, `all/3`, and `top/4` to support
+  generic hashing.
+- `1.0.0`: Initial commit
