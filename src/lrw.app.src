@@ -1,6 +1,6 @@
 {application, lrw,
  [{description, "Lowest Random Weight hashing"},
-  {vsn, "1.1.0"},
+  {vsn, "2.0.0"},
   {modules, [lrw]},
   {registered, []},
   {applications, [kernel, stdlib]}]}.

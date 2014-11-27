@@ -34,13 +34,9 @@ The `top/3` functions returns a subset. It is using `all/2` in its implementatio
     1> lrw:top(12123, [{127,0,0,1},{255,0,0,1},{198,2,1,2},{192,198,2,1}], 2).
     [{192,198,2,1},{127,0,0,1}]
 
-The list of IPs must be IPv4s.
-
-If the user wishes to break away from the algorithms explained in the
-paper, a more generic form exists:
-
- - `lrw:all_(Key, [Node, ...])`: any term can be used as `Node`.
- - `lrw:top_(Key, [Node, ...], Count)`: any term can be used as `Node`.
+The list of nodes can be any data type; not just IPs. For IPv4s, optimized
+functions respecting the original algorithm from the paper is implemented in
+`lrw:all_ip/2` and `lrw:top_ip/3`.
 
 Custom hashing functions can be passed by calling `lrw:all/3` and
 `lrw:top/4`, where the last argument of each function must be
@@ -65,6 +61,8 @@ Then run the property-based tests (10,000 each) with:
 
 ## Changelog ##
 
+- `2.0.0`: `all/2-3` and `top/3-4` are generic, and `all_ip/2` and `top_ip/3`
+           are optimized for IPs and respect the original algorithm.
 - `1.1.0`: Adding `all_/2`, `top_/3`, `all/3`, and `top/4` to support
   generic hashing.
 - `1.0.0`: Initial commit

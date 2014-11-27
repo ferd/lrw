@@ -10,20 +10,28 @@
 %%% @end
 -module(lrw).
 -export([all/2, top/3,
-         all_/2, top_/3]).
+         all_ip/2, top_ip/3]).
 -export([all/3, top/4]).
 -define(MOD, 2147483648). % 1 bsl 31
 
 -type hashfun() :: fun((Key::term(), Node::term()) -> number()).
 -export_type([hashfun/0]).
 
-%% @doc Returns the given set of IPv4 addresses sorted in increasing order of
+%% @doc Returns the given set of nodes sorted in increasing order of
 %% their weight for a given key. The weights aren't included in the returned
 %% results.
--spec all(Key :: term(), [NodeIP, ...]) -> [NodeIP, ...] when
+-spec all(Key :: term(), [Node, ...]) -> [Node, ...] when
+    Node :: term().
+all(Key, Nodes) ->
+    Mod = 1 bsl 32,
+    all(Key, Nodes, fun(K, Node) -> erlang:phash2({K,Node}, Mod) end).
+
+%% @doc Like `all/2' but for IPs specifically; with an optimized hash.
+-spec all_ip(Key :: term(), [NodeIP, ...]) -> [NodeIP, ...] when
     NodeIP :: inet:ip4_address().
-all(Key, NodeIPs) ->
+all_ip(Key, NodeIPs) ->
     all(Key, NodeIPs, fun(K, NodeIP) -> wrand2(K, to_num_ip(NodeIP)) end).
+
 
 %% @doc Returns the given set of nodes sorted in increasing order of their
 %% weight for a given key. The weights aren't included in the returned results.
@@ -35,19 +43,18 @@ all(Key, Nodes, Hash) ->
     Weighted = [{Hash(Key, Node), Node} || Node <- Nodes],
     [Node || {_, Node} <- lists:sort(Weighted)].
 
-%% @doc Like `all/2' but for any kind of term standing in for nodes.
--spec all_(Key :: term(), [Node, ...]) -> [Node, ...] when
-    Node :: term().
-all_(Key, Nodes) ->
-    Mod = 1 bsl 32,
-    all(Key, Nodes, fun(K, Node) -> erlang:phash2({K,Node}, Mod) end).
-
 %% @doc Only keep the `N' top entries, compared to `all/2'. Note that
 %% this call is unoptimized and just picks a sublist of the `all/2' algorithm.
--spec top(Key :: term(), [NodeIP, ...], Len :: pos_integer()) -> [NodeIP, ...] when
+-spec top(Key :: term(), [Node, ...], Len :: pos_integer()) -> [Node, ...] when
+    Node :: term().
+top(Key, Nodes, Len) ->
+    lists:sublist(all(Key, Nodes), 1, Len).
+
+%% @doc Like `top/3' but optimized with a special hash for IPs.
+-spec top_ip(Key :: term(), [NodeIP, ...], Len :: pos_integer()) -> [NodeIP, ...] when
     NodeIP :: inet:ip4_address().
-top(Key, NodeIPs, Len) ->
-    lists:sublist(all(Key, NodeIPs), 1, Len).
+top_ip(Key, NodeIPs, Len) ->
+    lists:sublist(all_ip(Key, NodeIPs), 1, Len).
 
 %% @doc Only keep the `N' top entries, compared to `all/3'. Note that
 %% this call is unoptimized and just picks a sublist of the `all/3' algorithm.
@@ -58,12 +65,6 @@ top(Key, NodeIPs, Len) ->
     Node :: term().
 top(Key, Nodes, Len, Hash) ->
     lists:sublist(all(Key, Nodes, Hash), 1, Len).
-
-%% @doc Like `top/2' but for any term standing in for nodes.
--spec top_(Key :: term(), [Node, ...], Len :: pos_integer()) -> [Node, ...] when
-    Node :: term().
-top_(Key, Nodes, Len) ->
-    lists:sublist(all_(Key, Nodes), 1, Len).
 
 %% @private Convert an IPv4 inet address of the form `{A,B,C,D}' to a
 %% 32 bit integer to be used in the hashing function.
