@@ -61,6 +61,7 @@ Then run the property-based tests (10,000 each) with:
 
 ## Changelog ##
 
+- `2.0.1`: make hex-compatible and publish
 - `2.0.0`: `all/2-3` and `top/3-4` are generic, and `all_ip/2` and `top_ip/3`
            are optimized for IPs and respect the original algorithm.
 - `1.1.0`: Adding `all_/2`, `top_/3`, `all/3`, and `top/4` to support

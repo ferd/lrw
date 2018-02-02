@@ -1,7 +1,12 @@
 {application, lrw,
  [{description, "Lowest Random Weight hashing"},
-  {vsn, "2.0.0"},
+  {vsn, "2.0.1"},
   {modules, [lrw]},
   {registered, []},
-  {applications, [kernel, stdlib]}]}.
+  {applications, [kernel, stdlib]},
+
+  {licenses, ["MIT"]},
+  {maintainers, ["Fred Hebert"]},
+  {links, [{"Github", "https://github.com/ferd/lrw"}]}
+]}.
 
